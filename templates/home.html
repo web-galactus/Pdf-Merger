@@ -282,7 +282,7 @@ form {
                 <div class="fallback">
                     <div id="fileInputs">
                         <div class="file-input-group">
-                            <input name="file1" type="file" class="file-input" />
+                            <input name="pdfs" type="file" class="file-input" />
                             
                             <button type="button" class="remove-file-btn" onclick="removeFileInput(this)" disabled>×</button>
                         </div>
@@ -296,18 +296,17 @@ form {
                 </form>
 
                 <script>
-    let fileCounter = 2; // Start from 2 since we already have file1
-
     function addFileInput() {
         const fileInputs = document.getElementById('fileInputs');
         const newFileInput = document.createElement('div');
         newFileInput.className = 'file-input-group';
+        
+        // Give the dynamically generated input the exact same name: "pdfs"
         newFileInput.innerHTML = `
-            <input name="file${fileCounter}" type="file" class="file-input" />
+            <input name="pdfs" type="file" class="file-input" />
             <button type="button" class="remove-file-btn" onclick="removeFileInput(this)">×</button>
         `;
         fileInputs.appendChild(newFileInput);
-        fileCounter++;
     }
 
     function removeFileInput(button) {
@@ -315,7 +314,6 @@ form {
         fileInputGroup.remove();
     }
 </script>
-
 
  <br>
 <footer>Pdf-Merger @2026</footer>

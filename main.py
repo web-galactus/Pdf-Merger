@@ -14,13 +14,15 @@ def home():
     
     if request.method == "POST":
             
-           pdfs = request.files.getlist("file1")
+           pdfs = request.files.getlist("pdfs")
             
+           print(len(pdfs))
           
            if not pdfs:
                    return "Please upload at least one PDF.", 400
            merger = PdfMerger()
            for pdf in pdfs:
+                  print(pdf.filename)
                   if pdf.filename.lower().endswith(".pdf"):
                      merger.append(pdf)
 
