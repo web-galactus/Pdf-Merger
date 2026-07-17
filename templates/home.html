@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF-MERGER</title>
+
+   <style> @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+    /* Attractive Dark Theme with Indigo Accents */
+    --bg-page: #030712;         /* Deepest rich black */
+    --bg-card: rgba(17, 24, 39, 0.65); /* Translucent dark gray for glass effect */
+    --bg-input: rgba(255, 255, 255, 0.03);
+    
+    --border-light: rgba(255, 255, 255, 0.08);
+    --border-focus: #6366f1;    /* Premium Indigo */
+    
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    
+    --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    --danger: #ef4444;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* Large subtle background glow to make the dark mode pop */
+    background-image: 
+        radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+}
+
+/* Entrance Animation */
+@keyframes fadeUp {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.container {
+    width: 100%;
+    max-width: 480px;
+    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+/* Header & Logo */
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.logo-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 16px;
+    animation: float 6s ease-in-out infinite;
+    /* Make the SVG stroke use our accent color */
+    stroke: #818cf8; 
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.03em;
+    background: linear-gradient(to right, #ffffff, #a5b4fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+p.subtitle {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin: 8px 0 0 0;
+    font-weight: 400;
+}
+
+/* Form Card with Glassmorphism */
+form {
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 32px;
+    border-radius: 24px;
+    border: 1px solid var(--border-light);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    box-sizing: border-box;
+}
+
+.fallback {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+/* File Inputs */
+.file-input-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-input);
+    padding: 8px 12px;
+    border-radius: 14px;
+    border: 1px solid var(--border-light);
+    transition: all 0.3s ease;
+}
+
+.file-input-group:hover, 
+.file-input-group:focus-within {
+    border-color: rgba(139, 92, 246, 0.4);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.file-input {
+    flex: 1;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.file-input::file-selector-button {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    border: 1px solid var(--border-light);
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.85rem;
+    margin-right: 12px;
+    transition: all 0.2s ease;
+}
+
+.file-input::file-selector-button:hover {
+    background: var(--text-primary);
+    color: var(--bg-page);
+}
+
+/* Remove Button */
+.remove-file-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: none;
+    border-radius: 10px;
+    width: 32px;
+    height: 32px;
+    font-size: 1.25rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.remove-file-btn:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--danger);
+}
+
+.remove-file-btn:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+}
+
+/* Add File Button */
+.add-file-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px dashed var(--border-light);
+    padding: 14px;
+    border-radius: 14px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 8px;
+    font-family: inherit;
+}
+
+.add-file-btn:hover {
+    border-color: #818cf8;
+    color: #818cf8;
+    background: rgba(99, 102, 241, 0.05);
+}
+
+/* Submit Button */
+.submit-btn {
+    width: 100%;
+    background: var(--accent-gradient);
+    color: #ffffff;
+    border: none;
+    padding: 16px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-radius: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 10px 20px -10px rgba(99, 102, 241, 0.5);
+}
+
+.submit-btn:hover {
+    box-shadow: 0 15px 25px -10px rgba(139, 92, 246, 0.6);
+}
+
+.submit-btn:active {
+    transform: scale(0.98);
+}
+
+.submit-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.25),
+        transparent
+    );
+    transform: skewX(-20deg);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    20% { left: 200%; }
+    100% { left: 200%; }
+}
+
+/* Footer */
+.app-footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    opacity: 0;
+    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.3s;
+}
+
+.app-footer span {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+</style>
+</head>
+<body>
+    
+    <h3>Merge Pdfs</h3>
+
+
+  <form action="/" method="POST" enctype="multipart/form-data">
+                <div class="fallback">
+                    <div id="fileInputs">
+                        <div class="file-input-group">
+                            <input name="file1" type="file" class="file-input" />
+                            
+                            <button type="button" class="remove-file-btn" onclick="removeFileInput(this)" disabled>×</button>
+                        </div>
+                    </div>
+                    <button type="button" class="add-file-btn" onclick="addFileInput()">+ Add File</button>
+                </div>
+
+                 <button type="submit" class="submit-btn" id="submitBtn">
+                   Merge Pdf
+                </button>
+                </form>
+
+                <script>
+    let fileCounter = 2; // Start from 2 since we already have file1
+
+    function addFileInput() {
+        const fileInputs = document.getElementById('fileInputs');
+        const newFileInput = document.createElement('div');
+        newFileInput.className = 'file-input-group';
+        newFileInput.innerHTML = `
+            <input name="file${fileCounter}" type="file" class="file-input" />
+            <button type="button" class="remove-file-btn" onclick="removeFileInput(this)">×</button>
+        `;
+        fileInputs.appendChild(newFileInput);
+        fileCounter++;
+    }
+
+    function removeFileInput(button) {
+        const fileInputGroup = button.parentElement;
+        fileInputGroup.remove();
+    }
+</script>
+
+
+ <br>
+<footer>Pdf-Merger @2026</footer>
+</body>
+ 
+</html>
